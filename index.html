@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <!-- bootstrap css -->
+ <link rel="stylesheet" href="css/bootstrap.min.css">
+ <!-- main css -->
+ <link rel="stylesheet" href="css/main.css">
+ <!-- google fonts -->
+ <link href="https://fonts.googleapis.com/css?family=Courgette" rel="stylesheet">
+
+ <!-- font awesome -->
+ <link rel="stylesheet" href="css/all.css">
+ <title>budget app</title>
+ <style>
+ </style>
+</head>
+
+<body>
+ <div class="container-fluid">
+  <div class="row">
+   <div class="col-11 mx-auto pt-3">
+    <!-- title -->
+    <h3 class="text-uppercase mb-4">budget app</h3>
+    <div class="row">
+     <div class="col-md-5 my-3">
+      <!-- budget feedback -->
+      <div class="budget-feedback alert alert-danger text-capitalize">budget feedback</div>
+      <!-- budget form -->
+      <form id="budget-form" class="budget-form"  >
+       <h5 class="text-capitalize">please enter your budget</h5>
+       <div class="form-group">
+        <input type="number" class="form-control budget-input" id="budget-input">
+       </div>
+       <!-- submit button -->
+       <button type="submit" class="btn text-capitalize budget-submit" id="budget-submit">calculate</button>
+      </form>
+     </div>
+     <div class="col-md-7">
+      <!-- app info -->
+      <div class="row my-3">
+       <div class="col-4 text-center mb-2">
+        <h6 class="text-uppercase info-title">budget</h6>
+        <span class="budget-icon"><i class="fas fa-money-bill-alt"></i></span>
+        <h4 class="text-uppercase mt-2 budget" id="budget"><span>$ </span><span id="budget-amount">0</span></h4>
+       </div>
+       <div class="col-4 text-center">
+        <h6 class="text-uppercase info-title">expenses</h6>
+        <span class="expense-icon"><i class="far fa-credit-card"></i></span>
+        <h4 class="text-uppercase mt-2 expense" id="expense"><span>$ </span><span id="expense-amount">0</span></h4>
+       </div>
+       <div class="col-4 text-center">
+        <h6 class="text-uppercase info-title">balance</h6>
+        <span class="balance-icon"><i class="fas fa-dollar-sign"></i></span>
+        <h4 class="text-uppercase mt-2 balance" id="balance"> <span>$ </span><span id="balance-amount">0</span></h4>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="row">
+     <div class="col-md-5 my-3">
+      <!-- expense feedback -->
+      <div class="expense-feedback alert alert-danger text-capitalize">expense feedback</div>
+      <!-- expense form -->
+      <form id="expense-form" class="expense-form">
+       <h5 class="text-capitalize">please enter your expense</h5>
+       <div class="form-group">
+        <input type="text" class="form-control expense-input" id="expense-input">
+       </div>
+       <h5 class="text-capitalize">please enter expense amount</h5>
+       <div class="form-group">
+        <input type="number" class="form-control expense-input" id="amount-input">
+       </div>
+       <!-- submit button -->
+       <button type="submit" class="btn text-capitalize expense-submit" id="expense-submit">add expense</button>
+      </form>
+     </div>
+     <div class="col-md-7 my-3">
+      <!-- expense list -->
+      <div class="expense-list" id="expense-list">
+
+       <div class="expense-list__info d-flex justify-content-between text-capitalize">
+        <h5 class="list-item">expense title</h5>
+        <h5 class="list-item">expense value</h5>
+        <h5 class="list-item"></h5>
+       </div>
+       <!-- single expense -->
+
+       <!-- <div class="expense">
+        <div class="expense-item d-flex justify-content-between align-items-baseline">
+
+         <h6 class="expense-title mb-0 text-uppercase list-item">- title</h6>
+         <h5 class="expense-amount mb-0 list-item">amount</h5>
+
+         <div class="expense-icons list-item">
+
+          <a href="#" class="edit-icon mx-2" data-id="${expense.id}">
+           <i class="fas fa-edit"></i>
+          </a>
+          <a href="#" class="delete-icon" data-id="${expense.id}">
+           <i class="fas fa-trash"></i>
+          </a>
+         </div>
+        </div>
+
+       </div> -->
+
+       <!-- end of single expense -->
+
+      </div>
+     </div>
+    </div>
+
+
+
+
+   </div>
+  </div>
+ </div>
+
+
+
+
+ <!-- jquery -->
+ <script src="js/jquery-3.3.1.min.js"></script>
+ <!-- bootstrap js -->
+ <script src="js/bootstrap.bundle.min.js"></script>
+ <!-- script js -->
+ <!-- <script type="text/javascript" src="js/app.js"></script> -->
+ <script>
+    class UI {
+        constructor() {
+            this.budgetFeedback = document.querySelector(".budget-feedback");
+            this.expenseFeedback = document.querySelector(".expense-feedback");
+            this.budgetForm = document.getElementById("budget-form");
+            this.budgetInput = document.getElementById("budget-input");
+            this.budgetAmount = document.getElementById("budget-amount");
+            this.expenseAmount = document.getElementById("expense-amount");
+            this.balance = document.getElementById("balance");
+            this.balance = document.getElementById("balance");
+            this.balanceAmount = document.getElementById("balance-amount");
+            this.expenseForm = document.getElementById("expense-form");
+            this.expenseInput = document.getElementById("expense-input");
+            this.amountInput = document.getElementById("amount-input");
+            this.expenseList = document.getElementById("expense-list");
+            this.itemList = [];
+            this.itemID = 0;
+        }
+
+        // submit Budget form method
+        submitBudgetForm(){
+            // console.log('Test Out!');
+            const value = this.budgetInput.value;
+            if (value === '' || value <0){  
+              this.budgetFeedback.classList.add("showItem");
+              this.budgetFeedback.innerHTML = `<p> Value cannot be empty or negative!</p>`
+            
+              const self = this;
+              setTimeout(function(){
+                  self.budgetFeedback.classList.remove("showItem");
+              }, 4000);
+
+            } else{
+                this.budgetAmount.textContent = value;
+                this.budgetInput.value = '';
+                this.showBalance();
+            }
+        }
+
+
+        // Show current Balance
+        showBalance(){
+            
+            
+            // if (this.budgetAmount.textContent !== 0){ this.budgetAmount.textContent +=this.budgetInput.value}
+            
+            const expense = this.totalExpense();
+            const total   = parseInt(this.budgetAmount.textContent) - expense;
+            this.balanceAmount.textContent = total;
+            
+            console.log(this.budgetAmount.textContent);
+
+            if (total < 0){
+                this.balance.classList.remove('showGreen','showBlack');
+                this.balance.classList.add('showRed');
+            } else if (total > 0){
+                this.balance.classList.remove('showRed','showBlack');
+                this.balance.classList.add('showGreen');
+            } else if (total === 0){
+                this.balance.classList.remove('showRed','showGreen');
+                this.balance.classList.add('showBlack');
+            }
+        }
+
+        // Submit Expense Form 
+        submitExpenseForm()
+        {
+            const expenseValue = this.expenseInput.value;
+            const amountValue  = this.amountInput.value;
+            if ( expenseValue === '' || amountValue === '' || amountValue <0)
+            {
+                this.expenseFeedback.classList.add("showItem");
+                this.expenseFeedback.innerHTML = `<p>Value cannot be empty or negative!</p>`;
+
+                const self = this;
+                setTimeout(function(){
+                    self.expenseFeedback.classList.remove("showItem");
+                }, 4000);
+            }else{
+                let amount = parseInt(amountValue);
+                this.expenseInput.value = '';
+                this.amountInput.value  = '';
+
+                let expense = {
+                    id      : this.itemID,
+                    title   : expenseValue,
+                    amount  : amount
+                }
+
+                this.itemID++;
+                this.itemList.push(expense);
+
+                this.addExpense(expense);
+                
+                // Show Expense
+                this.showBalance();
+            }
+        }
+
+
+        addExpense(expense)
+        {
+            const div = document.createElement('div');
+            div.classList.add('expense');
+            div.innerHTML = `
+                <div class="expense-item d-flex justify-content-between align-items-baseline">
+
+                    <h6 class="expense-title mb-0 text-uppercase list-item">- ${expense.title}</h6>
+                    <h5 class="expense-amount mb-0 list-item">${expense.amount}</h5>
+
+                        <div class="expense-icons list-item">
+
+                            <a href="#" class="edit-icon mx-2" data-id="${expense.id}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" class="delete-icon" data-id="${expense.id}">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                </div>`;
+            this.expenseList.appendChild(div);
+
+        }
+        
+        
+        totalExpense(){
+            let total = 0;
+            if (this.itemList.length>0){
+                // total = 1000;
+                total = this.itemList.reduce(function(acc, curr){
+                    acc +=  curr.amount;
+
+                    // console.log(`The current value is ${curr}`);
+                    return acc;
+                },0)
+            }
+            this.expenseAmount.textContent = total;
+            return total;
+        }
+
+        // Edit Expense
+        editExpense(element){
+            let id      = parseInt(element.dataset.id);
+            let parent  = element.parentElement.parentElement.parentElement;
+            //Remove from the dom
+            this.expenseList.removeChild(parent);
+            // Remove from the dom
+            let expense = this.itemList.filter(function(item){
+                return item.id === id;
+            })
+            // Show Value
+            this.expenseInput.value = expense[0].title;
+            this.amountInput.value = expense[0].amount;
+            // Remove from the List
+            let tempList = this.itemList.filter(function(item){
+                return item.id !== id;
+            })
+
+            this.itemList = tempList;
+            this.showBalance();
+        }
+        // Delete Expense
+        deleteExpense(element){
+            let id      = parseInt(element.dataset.id);
+            let parent  = element.parentElement.parentElement.parentElement;
+            //Remove from the dom
+            this.expenseList.removeChild(parent);
+
+            // Remove from the List
+            let tempList = this.itemList.filter(function(item){
+                return item.id !== id;
+            })
+
+            this.itemList = tempList;
+            this.showBalance();
+        }
+
+    }
+
+    function eventListenters(){
+        const budgetForm = document.getElementById("budget-form");
+        const expenseForm = document.getElementById("expense-form");
+        const expenseList = document.getElementById("expense-list");
+
+        // new instance of Class UI
+
+        const ui = new UI()
+
+        budgetForm.addEventListener("submit", function(event){
+            event.preventDefault();
+            ui.submitBudgetForm();
+        });
+        expenseForm.addEventListener("submit", function(event){
+            event.preventDefault();
+            ui.submitExpenseForm();
+
+        });
+        expenseList.addEventListener("click", function(event){
+            if(event.target.parentElement.classList.contains('edit-icon'))
+            {
+                ui.editExpense(event.target.parentElement);
+            }else(event.target.parentElement.classList.contains('delete-icon'))
+            {
+                ui.deleteExpense(event.target.parentElement);
+            }
+        
+        });
+
+    }
+    document.addEventListener("DOMContentLoaded", function(event) {
+        // console.log("DOM fully loaded and parsed");
+        eventListenters();
+    });
+
+
+ </script>
+</body>
+
+</html>
